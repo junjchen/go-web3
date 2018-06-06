@@ -460,6 +460,30 @@ func (eth *Eth) SendTransaction(transaction *dto.TransactionParameters) (string,
 
 }
 
+// SendRawTransaction - Creates new message call transaction or a contract creation for signed transactions.
+// Reference: https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_sendrawtransaction
+// Parameters:
+//    - DATA - The signed transaction data
+// Returns:
+//    - DATA, 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
+// Use eth_getTransactionReceipt to get the contract address, after the transaction was mined, when you created a contract.
+func (eth *Eth) SendRawTransaction(rawTransaction string) (string, error) {
+
+	params := make([]string, 1)
+	params[0] = rawTransaction
+
+	pointer := &dto.RequestResult{}
+
+	err := eth.provider.SendRequest(&pointer, "eth_sendRawTransaction", params)
+
+	if err != nil {
+		return "", err
+	}
+
+	return pointer.ToString()
+
+}
+
 // SignTransaction - Signs transactions without dispatching it to the network. It can be later submitted using eth_sendRawTransaction.
 // Reference: https://wiki.parity.io/JSONRPC-eth-module.html#eth_signtransaction
 // Parameters:
